@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário Futurista - Escolha de Técnico</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1b1b1b, #252525);
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #00ff99;
+            text-shadow: 0 0 10px rgba(0, 255, 153, 0.5);
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin: 20px 0;
+        }
+        label {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            background-color: #333;
+            color: #fff;
+            border: 2px solid #444;
+            border-radius: 10px;
+            outline: none;
+            box-sizing: border-box;
+        }
+        select {
+            background-color: #444;
+        }
+        textarea {
+            height: 120px;
+            resize: none;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: #00ff99;
+            color: #000;
+            border: none;
+            font-size: 1.2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .submit-btn:hover {
+            background-color: #00cc7a;
+        }
+        .limit-message {
+            font-size: 0.9rem;
+            color: #ff4d4d;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .saved-message {
+            font-size: 1rem;
+            color: #00ff99;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .interviews-section {
+            margin-top: 40px;
+        }
+        .interview {
+            background-color: #333;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+        }
+        .interview h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #00ff99;
+        }
+        .interview p {
+            margin: 10px 0;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Formulário para Escolha de Técnico</h1>
+        <form id="techForm">
+            <div class="form-group">
+                <label for="name">Seu nome:</label>
+                <input type="text" id="name" name="name" placeholder="Digite seu nome" required>
+            </div>
+
+            <div class="form-group">
+                <label for="team">Escolha o time (máximo de 3 escolhas por time):</label>
+                <select id="team" name="team" required>
+                    <option value="" disabled selected>Selecione um time</option>
+                    <option value="Paris">Paris</option>
+                    <option value="Barcelona">Barcelona</option>
+                    <option value="Real Madrid">Real Madrid</option>
+                    <option value="Manchester City">Manchester City</option>
+                    <option value="Borussia Dortmund">Borussia Dortmund</option>
+                    <option value="Milan">Milan</option>
+                    <option value="Bayern Munich">Bayern Munich</option>
+                    <option value="Al Nassr">Al Nassr</option>
+                    <option value="Flamengo">Flamengo</option>
+                    <option value="Corinthians">Corinthians</option>
+                </select>
+                <div id="teamLimitMessage" class="limit-message" style="display:none;">Você já escolheu esse time 3 vezes.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="reason">Por que você quer ser técnico deste time?</label>
+                <textarea id="reason" name="reason" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="experience">Você tem alguma experiência anterior como técnico? (Caso sim, descreva)</label>
+                <textarea id="experience" name="experience" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="favoritePlayer">Qual é o seu jogador favorito?</label>
+                <input type="text" id="favoritePlayer" name="favoritePlayer" placeholder="Digite o nome do jogador favorito" required>
+            </div>
+
+            <div class="form-group">
+                <label for="strategy">Qual é sua estratégia principal para o time?</label>
+                <textarea id="strategy" name="strategy" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="skills">Quais habilidades você acha mais importantes para um técnico?</label>
+                <textarea id="skills" name="skills" required></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">Enviar Formulário</button>
+        </form>
+
+        <div id="savedMessage" class="saved-message" style="display: none;">
+            Suas respostas foram salvas com sucesso!
+        </div>
+
+        <div class="interviews-section">
+            <h2>Entrevistas Realizadas:</h2>
+            <div id="interviewsList"></div>
+        </div>
+    </div>
+
+    <script>
+        const teamSelect = document.getElementById('team');
+        const teamLimitMessage = document.getElementById('teamLimitMessage');
+        const form = document.getElementById('techForm');
+        const savedMessage = document.getElementById('savedMessage');
+        const interviewsList = document.getElementById('interviewsList');
+
+        let teamChoices = {
+            'Paris': 0,
+            'Barcelona': 0,
+            'Real Madrid': 0,
+            'Manchester City': 0,
+            'Borussia Dortmund': 0,
+            'Milan': 0,
+            'Bayern Munich': 0,
+            'Al Nassr': 0,
+            'Flamengo': 0,
+            'Corinthians': 0
+        };
+
+        teamSelect.addEventListener('change', () => {
+            const selectedTeam = teamSelect.value;
+            if (teamChoices[selectedTeam] >= 3) {
+                teamSelect.value = "";
+                teamLimitMessage.style.display = 'block';
+            } else {
+                teamLimitMessage.style.display = 'none';
+                teamChoices[selectedTeam]++;
+            }
+        });
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const formEntries = {};
+            formData.forEach((value, key) => {
+                formEntries[key] = value;
+            });
+
+            // Salva as respostas no localStorage
+            let savedInterviews = JSON.parse(localStorage.getItem('interviews')) || [];
+            savedInterviews.push(formEntries);
+            localStorage.setItem('interviews', JSON.stringify(savedInterviews));
+
+            savedMessage.style.display = 'block';
+
+            // Exibe as entrevistas salvas
+            displayInterviews();
+
+            // Aqui você pode adicionar código para enviar os dados para o servidor, caso necessário.
+        });
+
+        // Carregar as respostas salvas, se existirem
+        window.onload = function() {
+            displayInterviews();
+        };
+
+        // Função para exibir as entrevistas salvas
+        function displayInterviews() {
+            const savedInterviews = JSON.parse(localStorage.getItem('interviews')) || [];
+
+            interviewsList.innerHTML = '';
+            savedInterviews.forEach((interview, index) => {
+                const interviewDiv = document.createElement('div');
+                interviewDiv.classList.add('interview');
+
+                interviewDiv.innerHTML = `
+                    <h3>Entrevista #${index + 1}</h3>
+                    <p><strong>Nome:</strong> ${interview.name}</p>
+                    <p><strong>Time Escolhido:</strong> ${interview.team}</p>
+                    <p><strong>Motivo para ser técnico:</strong> ${interview.reason}</p>
+                    <p><strong>Experiência:</strong> ${interview.experience}</p>
+                    <p><strong>Jogador Favorito:</strong> ${interview.favoritePlayer}</p>
+                    <p><strong>Estratégia:</strong> ${interview.strategy}</p>
+                    <p><strong>Habilidades Importantes:</strong> ${interview.skills}</p>
+                `;
+
+                interviewsList.appendChild(interviewDiv);
+            });
+        }
+    </script>
+</body>
+</html>
